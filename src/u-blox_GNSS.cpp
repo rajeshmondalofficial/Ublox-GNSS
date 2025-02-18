@@ -5016,6 +5016,34 @@ sfe_ublox_status_e DevUBLOXGNSS::sendCommand(ubxPacket *outgoingUBX, uint16_t ma
   if (_commType == COMM_TYPE_I2C)
   {
     retVal = sendI2cCommand(outgoingUBX);
+    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED){
+      debugStatus = 3;
+    }
+
+    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) {
+      debugStatus = 4;
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_FAIL) {
+      debugStatus = 6;
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_COMMAND_NACK) {
+      debugStatus = 7;
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_CRC_FAIL) {
+      debugStatus = 8;
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_TIMEOUT) {
+      debugStatus = 9;
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_DATA_SENT) {
+      debugStatus = 10;
+    }
+
     if (retVal != SFE_UBLOX_STATUS_SUCCESS)
     {
 #ifndef SFE_UBLOX_REDUCED_PROG_MEM
