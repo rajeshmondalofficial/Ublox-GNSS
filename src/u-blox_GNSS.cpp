@@ -11269,7 +11269,7 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
 
 
     debugStatus = 5; 
-    return (false);
+    return (true);
   }
 }
 
