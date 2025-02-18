@@ -11207,19 +11207,19 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
   if (packetUBXNAVPVT == nullptr) // Bail if the RAM allocation failed
     return (false);
 
-  if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
-  {
-    // The GPS is automatically reporting, we just check whether we got unread data
-    checkUbloxInternal(&packetCfg, 0, 0); // Call checkUbloxInternal to parse any incoming data. Don't overwrite the requested Class and ID
-    return packetUBXNAVPVT->moduleQueried.moduleQueried1.bits.all;
-  }
-  else if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && !packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
-  {
-    // Someone else has to call checkUblox for us...
-    return (false);
-  }
-  else
-  {
+  // if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
+  // {
+  //   // The GPS is automatically reporting, we just check whether we got unread data
+  //   checkUbloxInternal(&packetCfg, 0, 0); // Call checkUbloxInternal to parse any incoming data. Don't overwrite the requested Class and ID
+  //   return packetUBXNAVPVT->moduleQueried.moduleQueried1.bits.all;
+  // }
+  // else if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && !packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
+  // {
+  //   // Someone else has to call checkUblox for us...
+  //   return (false);
+  // }
+  // else
+  // {
     // The GPS is not automatically reporting navigation position so we have to poll explicitly
     packetCfg.cls = UBX_CLASS_NAV;
     packetCfg.id = UBX_NAV_PVT;
@@ -11237,7 +11237,7 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
       return (true);
 
     return (false);
-  }
+  // }
 }
 
 // Enable or disable automatic navigation message generation by the GNSS. This changes the way getPVT
