@@ -1364,6 +1364,8 @@ public:
   uint64_t extractUnsignedBits(uint8_t *ptr, uint16_t start, uint16_t width);
   int64_t extractSignedBits(uint8_t *ptr, uint16_t start, uint16_t width);
 
+  int32_t debugStatus = 0;
+
   // Pointers to storage for the "automatic" messages
   // RAM is allocated for these if/when required.
 

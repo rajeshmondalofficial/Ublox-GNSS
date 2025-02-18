@@ -11207,19 +11207,21 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
   if (packetUBXNAVPVT == nullptr) // Bail if the RAM allocation failed
     return (false);
 
-  // if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
-  // {
-  //   // The GPS is automatically reporting, we just check whether we got unread data
-  //   checkUbloxInternal(&packetCfg, 0, 0); // Call checkUbloxInternal to parse any incoming data. Don't overwrite the requested Class and ID
-  //   return packetUBXNAVPVT->moduleQueried.moduleQueried1.bits.all;
-  // }
-  // else if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && !packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
-  // {
-  //   // Someone else has to call checkUblox for us...
-  //   return (false);
-  // }
-  // else
-  // {
+  if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
+  {
+    debugStatus = 1;
+    // The GPS is automatically reporting, we just check whether we got unread data
+    checkUbloxInternal(&packetCfg, 0, 0); // Call checkUbloxInternal to parse any incoming data. Don't overwrite the requested Class and ID
+    return packetUBXNAVPVT->moduleQueried.moduleQueried1.bits.all;
+  }
+  else if (packetUBXNAVPVT->automaticFlags.flags.bits.automatic && !packetUBXNAVPVT->automaticFlags.flags.bits.implicitUpdate)
+  {
+    debugStatus = 2;
+    // Someone else has to call checkUblox for us...
+    return (false);
+  }
+  else
+  {
     // The GPS is not automatically reporting navigation position so we have to poll explicitly
     packetCfg.cls = UBX_CLASS_NAV;
     packetCfg.id = UBX_NAV_PVT;
@@ -11230,14 +11232,23 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
     // The data is parsed as part of processing the response
     sfe_ublox_status_e retVal = sendCommand(&packetCfg, maxWait);
 
-    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
+    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED){
+      debugStatus = 3;
       return (true);
+    }
 
-    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN)
+    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) {
+      debugStatus = 4;
       return (true);
+    }
 
+    debugStatus = 5; 
     return (false);
-  // }
+  }
+}
+
+int32_t DevUBLOXGNSS::getDebugStatus() {
+  return debugStatus;
 }
 
 // Enable or disable automatic navigation message generation by the GNSS. This changes the way getPVT
