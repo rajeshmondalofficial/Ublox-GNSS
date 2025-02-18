@@ -11242,6 +11242,27 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
       return (true);
     }
 
+    if(retVal == SFE_UBLOX_STATUS_FAIL) {
+      debugStatus = 6;
+      return (false);
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_COMMAND_NACK) {
+      debugStatus = 7;
+      return (false);
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_CRC_FAIL) {
+      debugStatus = 8;
+      return (false);
+    }
+
+    if(retVal == SFE_UBLOX_STATUS_CRC_FAIL) {
+      debugStatus = 9;
+      return (false);
+    }
+
+
     debugStatus = 5; 
     return (false);
   }
