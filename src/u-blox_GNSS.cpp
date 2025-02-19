@@ -5016,33 +5016,6 @@ sfe_ublox_status_e DevUBLOXGNSS::sendCommand(ubxPacket *outgoingUBX, uint16_t ma
   if (_commType == COMM_TYPE_I2C)
   {
     retVal = sendI2cCommand(outgoingUBX);
-    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED){
-      debugStatus = 3;
-    }
-
-    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) {
-      debugStatus = 4;
-    }
-
-    if(retVal == SFE_UBLOX_STATUS_FAIL) {
-      debugStatus = 6;
-    }
-
-    if(retVal == SFE_UBLOX_STATUS_COMMAND_NACK) {
-      debugStatus = 7;
-    }
-
-    if(retVal == SFE_UBLOX_STATUS_CRC_FAIL) {
-      debugStatus = 8;
-    }
-
-    if(retVal == SFE_UBLOX_STATUS_TIMEOUT) {
-      debugStatus = 9;
-    }
-
-    if(retVal == SFE_UBLOX_STATUS_DATA_SENT) {
-      debugStatus = 10;
-    }
 
     if (retVal != SFE_UBLOX_STATUS_SUCCESS)
     {
@@ -5154,8 +5127,10 @@ sfe_ublox_status_e DevUBLOXGNSS::sendI2cCommand(ubxPacket *outgoingUBX)
     buf[i + 6] = outgoingUBX->checksumA;
     buf[i + 7] = outgoingUBX->checksumB;
 
-    if (writeBytes(buf, bytesLeftToSend + 8) != bytesLeftToSend + 8)
+    if (writeBytes(buf, bytesLeftToSend + 8) != bytesLeftToSend + 8) {
       return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK
+      debugStatus = 10;
+    }
   }
 
   else
@@ -5168,8 +5143,10 @@ sfe_ublox_status_e DevUBLOXGNSS::sendI2cCommand(ubxPacket *outgoingUBX)
     buf[4] = outgoingUBX->len & 0xFF; // LSB
     buf[5] = outgoingUBX->len >> 8;   // MSB
 
-    if (writeBytes(buf, 6) != 6)
+    if (writeBytes(buf, 6) != 6) {
       return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK
+      debugStatus = 11;
+    }
 
     // If bytesLeftToSend is zero, that's OK.
     // If bytesLeftToSend is >= 2, that's OK.
@@ -5189,8 +5166,10 @@ sfe_ublox_status_e DevUBLOXGNSS::sendI2cCommand(ubxPacket *outgoingUBX)
       if ((startSpot + x) >= (outgoingUBX->len))
         x = outgoingUBX->len - startSpot;
 
-      if (writeBytes(&outgoingUBX->payload[startSpot], x) != x)
+      if (writeBytes(&outgoingUBX->payload[startSpot], x) != x) {
         return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK
+        debugStatus = 12;
+      }
 
       startSpot += x;
     }
@@ -5202,16 +5181,20 @@ sfe_ublox_status_e DevUBLOXGNSS::sendI2cCommand(ubxPacket *outgoingUBX)
       buf[1] = outgoingUBX->checksumA;
       buf[2] = outgoingUBX->checksumB;
 
-      if (writeBytes(buf, 3) != 3)
+      if (writeBytes(buf, 3) != 3) {
         return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK
+        debugStatus = 13;
+      }
     }
     else
     {
       buf[0] = outgoingUBX->checksumA;
       buf[1] = outgoingUBX->checksumB;
 
-      if (writeBytes(buf, 2) != 2)
-        return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK
+      if (writeBytes(buf, 2) != 2) {
+        return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); // Sensor did not ACK 
+        debugStatus = 14;
+      }
     }
   }
 
@@ -11251,10 +11234,10 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
   else
   {
     // The GPS is not automatically reporting navigation position so we have to poll explicitly
-    packetCfg.cls = UBX_CLASS_NAV;
-    packetCfg.id = UBX_NAV_PVT;
-    packetCfg.len = 0;
-    packetCfg.startingSpot = 0;
+    // packetCfg.cls = UBX_CLASS_NAV;
+    // packetCfg.id = UBX_NAV_PVT;
+    // packetCfg.len = 0;
+    // packetCfg.startingSpot = 0;
     // packetCfg.startingSpot = 20; //Begin listening at spot 20 so we can record up to 20+packetCfgPayloadSize = 84 bytes Note:now hard-coded in processUBX
 
     // The data is parsed as part of processing the response
