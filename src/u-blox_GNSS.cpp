@@ -11243,15 +11243,11 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
     // The data is parsed as part of processing the response
     sfe_ublox_status_e retVal = sendCommand(&packetCfg, maxWait);
 
-    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED){
-      debugStatus = 3;
+    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
       return (true);
-    }
 
-    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) {
-      debugStatus = 4;
+    if (retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN)
       return (true);
-    }
 
     if(retVal == SFE_UBLOX_STATUS_FAIL) {
       debugStatus = 6;
@@ -11277,8 +11273,8 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
       debugStatus = 10;
       return (false);
     }
-    
-    return (true);
+
+    return (false);
   }
 }
 
