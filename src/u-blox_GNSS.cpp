@@ -11234,10 +11234,10 @@ bool DevUBLOXGNSS::getPVT(uint16_t maxWait)
   else
   {
     // The GPS is not automatically reporting navigation position so we have to poll explicitly
-    // packetCfg.cls = UBX_CLASS_NAV;
-    // packetCfg.id = UBX_NAV_PVT;
-    // packetCfg.len = 0;
-    // packetCfg.startingSpot = 0;
+    packetCfg.cls = UBX_CLASS_NAV;
+    packetCfg.id = UBX_NAV_PVT;
+    packetCfg.len = 0;
+    packetCfg.startingSpot = 0;
     // packetCfg.startingSpot = 20; //Begin listening at spot 20 so we can record up to 20+packetCfgPayloadSize = 84 bytes Note:now hard-coded in processUBX
 
     // The data is parsed as part of processing the response
